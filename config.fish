@@ -4,6 +4,7 @@ set fish_greeting ""
 set PATH $HOME/.rbenv/shims $PATH
 
 # brew
+set -x HOMEBREW_NO_EMOJI "you bet"
 set PATH /usr/local/{bin,sbin} $PATH
 
 set -g GIT_PS1_SHOWDIRTYSTATE 1
