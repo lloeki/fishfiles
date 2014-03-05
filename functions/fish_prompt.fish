@@ -93,12 +93,9 @@ function fish_prompt --description 'Write out the prompt'
     __git_ps1_gitdir
     [ -n $GIT_PS1_GITDIR ]; and __git_ps1_vars
 
-    set -g CURRENT_BG 'NONE'
+    prompt_start
     prompt_host
     prompt_vcs_repo; or prompt_dir
-    prompt_vcs_status
-    prompt_vcs_action
-    prompt_last_rc
     prompt_end
-    echo -n -s $__fish_prompt_user_host $__fish_prompt_mark ' '
+    echo -n ' '
 end
