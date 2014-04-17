@@ -152,7 +152,7 @@ function __git_ps1_vars --description "compute git status and set environment va
     if [ -d "$g/rebase-merge" ]
         set rebase 1
         set merge 1
-        set subject (__git_ps1_rebase_merge_head)
+        set subject (__git_ps1_rebase_merge_head $g)
     end
     if [ $rebase -eq 1 -a -f "$g/rebase-merge/interactive" ]
         set interactive 1
