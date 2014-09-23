@@ -1,4 +1,4 @@
-set -l bundled_commands annotate cap capify cucumber foreman guard heroku nanoc rackup rainbows rake rspec ruby shotgun spec spork thin unicorn irb pry
+set -l bundled_commands annotate cap capify cucumber guard heroku nanoc rackup rainbows rake rspec ruby shotgun spec spork thin unicorn irb pry
 
 function __bundler_installed
     which bundle > /dev/null 2>&1
