@@ -1,101 +1,76 @@
-source ~/.config/fish/git_prompt_info.fish
-source ~/.config/fish/functions/prompt_segment.fish
+# Set the default prompt command. Make sure that every terminal escape
+# string has a newline before and after, so that fish will know how
+# long it is.
+#
+# Some vars control advanced but time-consuming git behavior, set those vars
+# universally or globally, depending on your use case:
+#
+#		set -U GIT_INFO_SHOWDIRTYSTATE 1
+#		set -U GIT_INFO_SHOWSTASHSTATE 1
+#		set -U GIT_INFO_SHOWUNTRACKEDFILES 1
 
-function prompt_host
-    [ -z "$prompt_host" ]; and set -g prompt_host (hostname | cut -d . -f 1)
+function fish_prompt --description "Write out the prompt with git info"
+	# Just calculate these once, to save a few cycles when displaying the prompt
+	if not set -q __fish_prompt_hostname
+		set -g __fish_prompt_hostname (hostname|cut -d . -f 1)
+	end
 
-    set -l bg 'black'
-    set -l fg 'white'
+	if not set -q __fish_prompt_normal
+		set -g __fish_prompt_normal (set_color normal)
+	end
 
-    if [ "$USER" = 'root' ]
-        set bg 'red'
-    end
+		# Evaluate git state only once, and only if needed
+		__git_info_gitdir	# ideally only called when pwd changes
+		[ -n $GIT_INFO_GITDIR ]; and __git_info_vars	# be lazy: sets vars only if git
 
-    if [ -n "$SSH_CLIENT" ]
-        set fg 'yellow'
-    end
+	switch $USER
 
-    prompt_segment $bg $fg $USER"@"$prompt_host
-end
+		case root toor
 
-function prompt_dir
-    prompt_segment green white (echo $PWD | sed "s#^$HOME#~#")
-end
+		if not set -q __fish_prompt_cwd
+			if set -q fish_color_cwd_root
+				set -g __fish_prompt_cwd (set_color $fish_color_cwd_root)
+			else
+				set -g __fish_prompt_cwd (set_color $fish_color_cwd)
+			end
+		end
 
-function prompt_last_rc
-    [ "$LAST_CMD_RC" -ne 0 ]; and prompt_segment red white "$LAST_CMD_RC"
-end
+		echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' "$__fish_prompt_cwd" (prompt_pwd) "$__fish_prompt_normal" '# '
 
-function prompt_git
-    if [ -n "$GIT_PS1_STATUS" ]
-        set -g PROMPT_VCS_DIRTY ""
-        set -g PROMPT_VCS_TYPE 'git'
-        set -g PROMPT_VCS_REF "$GIT_PS1_BRANCH"
-        set -g PROMPT_VCS_WPATH "$GIT_PS1_TOPLEVEL"
-        set -g PROMPT_VCS_WNAME "$GIT_PS1_NAME"
-        set -g PROMPT_VCS_WPWD "$GIT_PS1_PREFIX"
-        contains s $GIT_PS1_STATUS; and set PROMPT_VCS_DIRTY 1
-        contains t $GIT_PS1_STATUS; and set PROMPT_VCS_DIRTY 1
-        contains u $GIT_PS1_STATUS; and set PROMPT_VCS_DIRTY 1
-        return 0
-    else
-        set -e PROMPT_VCS_TYPE
-        return 1
-    end
-end
+		case '*'
 
-function prompt_vcs_repo
-    if prompt_git
-        set -l branch_icon " ⎇ "
-        set -l repo_color
-        if [ "$PROMPT_VCS_DIRTY" -eq 1 ]
-            set repo_color red
-        else
-            set repo_color blue
-        end
+		if not set -q __fish_prompt_cwd
+			set -g __fish_prompt_cwd (set_color $fish_color_cwd)
+		end
 
-        prompt_segment $repo_color white "$PROMPT_VCS_WNAME$branch_icon$PROMPT_VCS_REF"
-        [ -n "$PROMPT_VCS_WPWD" ]; and prompt_segment green white "$PROMPT_VCS_WPWD"
+		echo -n -s "$USER" @ "$__fish_prompt_hostname" ' ' "$__fish_prompt_cwd" (prompt_pwd) "$__fish_prompt_normal"
 
-        return 0
-    else
-        return 1
-    end
-end
+		# add git prompt info
+		if [ -n "$GIT_INFO_STATUS" ]
+			set_color blue
+			echo -n " $GIT_INFO_BRANCH"
 
-function prompt_vcs_status
-    if prompt_git
-        set -l vcs_status ""
-        contains h $GIT_PS1_STATUS; and set vcs_status "$vcs_status""↰"
-        contains t $GIT_PS1_STATUS; and set vcs_status "$vcs_status""!"
-        contains u $GIT_PS1_STATUS; and set vcs_status "$vcs_status""≠"
-        contains s $GIT_PS1_STATUS; and set vcs_status "$vcs_status""±"
-        contains n $GIT_PS1_STATUS; and set vcs_status "$vcs_status""∅"
-        [ -n "$vcs_status" ]; and prompt_segment black white "$vcs_status"
-    end
-end
+			set -l vcs_status ""
+			contains h $GIT_INFO_STATUS; and set vcs_status "$vcs_status""↰"
+			contains t $GIT_INFO_STATUS; and set vcs_status "$vcs_status""!"
+			contains u $GIT_INFO_STATUS; and set vcs_status "$vcs_status""≠"
+			contains s $GIT_INFO_STATUS; and set vcs_status "$vcs_status""±"
+			contains n $GIT_INFO_STATUS; and set vcs_status "$vcs_status""∅"
+			set_color red
+			[ -n "$vcs_status" ]; and echo -n " $vcs_status"
 
-function prompt_vcs_action
-    if prompt_git
-        set -l action ""
-        contains R $GIT_PS1_STATUS; and set action "$action rebase"
-        contains i $GIT_PS1_STATUS; and set action "$action-i"
-        contains A $GIT_PS1_STATUS; and set action "$action apply"
-        contains M $GIT_PS1_STATUS; and set action "$action merge"
-        contains B $GIT_PS1_STATUS; and set action "$action bisect"
-        [ -n "$action" ]; and prompt_segment red white "$action"
-    end
-end
+			set -l action ""
+			contains R $GIT_INFO_STATUS; and set action "$action rebase"
+			contains i $GIT_INFO_STATUS; and set action "$action-i"
+			contains A $GIT_INFO_STATUS; and set action "$action apply"
+			contains M $GIT_INFO_STATUS; and set action "$action merge"
+			contains B $GIT_INFO_STATUS; and set action "$action bisect"
+			set_color yellow
+			[ -n "$action" ]; and echo -n " $action"
+		end
 
-function fish_prompt --description 'Write out the prompt'
-    set -g LAST_CMD_RC $status
-
-    __git_ps1_gitdir
-    [ -n $GIT_PS1_GITDIR ]; and __git_ps1_vars
-
-    prompt_start
-    prompt_host
-    prompt_vcs_repo; or prompt_dir
-    prompt_end
-    echo -n ' '
+		# close prompt
+		set_color normal
+		echo -n '> '
+	end
 end
