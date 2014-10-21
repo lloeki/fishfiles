@@ -14,7 +14,7 @@ function fish_prompt --description "Write out a nice prompt"
     # add git prompt info
     if [ -n "$GIT_INFO_STATUS" ]
         set_color blue
-        echo -n " $GIT_INFO_BRANCH"
+        echo -n " $GIT_INFO_REF"
 
         set -l vcs_status ""
         contains h $GIT_INFO_STATUS; and set vcs_status "$vcs_status""↰"

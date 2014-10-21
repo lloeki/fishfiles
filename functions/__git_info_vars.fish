@@ -32,7 +32,7 @@
 #			#
 #			# a colorful example:
 #			set_color blue
-#			echo " $GIT_INFO_BRANCH "
+#			echo " $GIT_INFO_REF "
 #			set_color red
 #			contains t $GIT_INFO_STATUS; and echo -n "!"
 #			set_color green
@@ -65,13 +65,13 @@ function __git_info_describe --description "describe according to GIT_INFO_DESCR
 	end 2>/dev/null
 end
 
-function __git_info_branch --description "get current branch or ref"
-	set -l branch (git symbolic-ref HEAD 2>/dev/null); or \
-	set -l branch (__git_info_describe); or \
-	set -l branch (git rev-parse --short HEAD); or \
-	set -l branch "unknown"
+function __git_info_ref --description "get current branch or ref"
+	set -l ref (git symbolic-ref HEAD 2>/dev/null); or \
+	set -l ref (__git_info_describe); or \
+	set -l ref (git rev-parse --short HEAD); or \
+	set -l ref "unknown"
 
-	echo $branch | sed 's#^refs/heads/##'
+	echo $ref | sed 's#^refs/heads/##'
 end
 
 function __git_info_vars --description "compute git status and set environment variables"
@@ -79,7 +79,7 @@ function __git_info_vars --description "compute git status and set environment v
 
 	if [ -z "$g" ]
 		set -e GIT_INFO_STATUS
-		set -e GIT_INFO_BRANCH
+		set -e GIT_INFO_REF
 		set -e GIT_INFO_SUBJECT
 		set -e GIT_INFO_TOPLEVEL
 		set -e GIT_INFO_NAME
@@ -93,7 +93,7 @@ function __git_info_vars --description "compute git status and set environment v
 	set -l merge 0
 	set -l bisect 0
 	set -l subject ""
-	set -l branch ""
+	set -l ref ""
 	set -l gitdir 0
 	set -l bare 0
 	set -l work 0
@@ -140,7 +140,7 @@ function __git_info_vars --description "compute git status and set environment v
 	[ -z "$prefix" ]; and set prefix '.' # toplevel == prefix
 
 	# get the current branch, or whatever describes HEAD
-	set branch (__git_info_branch)
+	set ref (__git_info_ref)
 
 	# get name
 	set name (basename "$toplevel")
@@ -207,7 +207,7 @@ function __git_info_vars --description "compute git status and set environment v
 	[ $new				 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "n"
 	[ $untracked	 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "t"
 	[ $stashed		 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "h"
-	set -g GIT_INFO_BRANCH "$branch"
+	set -g GIT_INFO_REF "$ref"
 	set -g GIT_INFO_SUBJECT "$subject"
 	set -g GIT_INFO_TOPLEVEL "$toplevel"
 	set -g GIT_INFO_NAME "$name"
