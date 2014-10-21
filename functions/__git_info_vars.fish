@@ -18,8 +18,8 @@
 # function fish_prompt
 #		...
 #		# evaluate git state as lazily as possible
-#		__git_info_gitdir	# ideally only called when pwd changes
-#		[ -n $GIT_INFO_GITDIR ]; and __git_info_vars	# sets state vars
+#		__git_info_gitdir # ideally only called when pwd changes
+#		[ -n $GIT_INFO_GITDIR ]; and __git_info_vars # sets state vars
 #		...
 #
 #		# echo your prompt
@@ -109,7 +109,7 @@ function __git_info_vars --description "compute git status and set environment v
 
 	# assess position in repository
 	[ "true" = (git rev-parse --is-inside-git-dir 2>/dev/null) ]; and set gitdir 1
-	[ "$gitdir" -eq 1 -a "true" = (git rev-parse --is-bare-repository	2>/dev/null) ]; and set bare 1
+	[ "$gitdir" -eq 1 -a "true" = (git rev-parse --is-bare-repository  2>/dev/null) ]; and set bare 1
 	[ "$gitdir" -eq 0 -a "true" = (git rev-parse --is-inside-work-tree 2>/dev/null) ]; and set work 1
 
 	# gitdir corner case
@@ -159,8 +159,8 @@ function __git_info_vars --description "compute git status and set environment v
 		set rebase 1
 		set apply 1
 	end
-	[ $apply	-eq 1 -a -f "$g/rebase-apply/applying" ]; and set rebase 0
-	[ $apply	-eq 1 -a -f "$g/rebase-apply/rebasing" ]; and set apply 0
+	[ $apply  -eq 1 -a -f "$g/rebase-apply/applying" ]; and set rebase 0
+	[ $apply  -eq 1 -a -f "$g/rebase-apply/rebasing" ]; and set apply 0
 	[ $rebase -eq 0 -a -f "$g/MERGE_HEAD" ]; and set merge 1
 	[ $rebase -eq 0 -a -f "$g/BISECT_LOG" ]; and set bisect 1
 
@@ -194,19 +194,19 @@ function __git_info_vars --description "compute git status and set environment v
 
 	# build global environment variables
 	set -g GIT_INFO_STATUS ""
-	[ $rebase			-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "R"
+	[ $rebase      -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "R"
 	[ $interactive -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "i"
-	[ $apply			 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "A"
-	[ $merge			 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "M"
-	[ $bisect			-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "B"
-	[ $gitdir			-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "g"
-	[ $bare				-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "b"
-	[ $work				-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "w"
-	[ $staged			-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "s"
-	[ $unstaged		-eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "u"
-	[ $new				 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "n"
-	[ $untracked	 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "t"
-	[ $stashed		 -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "h"
+	[ $apply       -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "A"
+	[ $merge       -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "M"
+	[ $bisect      -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "B"
+	[ $gitdir      -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "g"
+	[ $bare        -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "b"
+	[ $work        -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "w"
+	[ $staged      -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "s"
+	[ $unstaged    -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "u"
+	[ $new         -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "n"
+	[ $untracked   -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "t"
+	[ $stashed     -eq 1 ]; and set GIT_INFO_STATUS $GIT_INFO_STATUS "h"
 	set -g GIT_INFO_REF "$ref"
 	set -g GIT_INFO_SUBJECT "$subject"
 	set -g GIT_INFO_TOPLEVEL "$toplevel"
