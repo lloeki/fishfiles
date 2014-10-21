@@ -66,12 +66,12 @@ function __git_info_describe --description "describe according to GIT_INFO_DESCR
 end
 
 function __git_info_branch --description "get current branch or ref"
-	set -l branch (git symbolic-ref HEAD 2>/dev/null | sed 's#^refs/heads/##'); or \
-	set -l branch (__git_info_describe | sed 's#^refs/heads/##'); or \
-	set -l branch (git rev-parse --short HEAD | sed 's#^refs/heads/##'); or \
+	set -l branch (git symbolic-ref HEAD 2>/dev/null); or \
+	set -l branch (__git_info_describe); or \
+	set -l branch (git rev-parse --short HEAD); or \
 	set -l branch "unknown"
 
-	echo $branch
+	echo $branch | sed 's#^refs/heads/##'
 end
 
 function __git_info_vars --description "compute git status and set environment variables"
