@@ -32,7 +32,7 @@ function fish_prompt --description "Write out a nice prompt"
         contains M $GIT_INFO_STATUS; and set action "$action merge"
         contains B $GIT_INFO_STATUS; and set action "$action bisect"
         set_color yellow
-        [ -n "$action" ]; and echo -n " $action"
+        [ -n "$action" ]; and echo -n "$action"
     end
 
     # close prompt
