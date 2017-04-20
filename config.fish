@@ -1,9 +1,5 @@
 set fish_greeting ""
 
-# brew
-set -x HOMEBREW_NO_EMOJI "you bet"
-set PATH /usr/local/{bin,sbin} $PATH
-
 # arch
 set PATH /opt/arch/{bin,sbin} $PATH
 
