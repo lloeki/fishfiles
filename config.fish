@@ -3,9 +3,12 @@ set fish_greeting ""
 # arch
 set PATH /opt/arch/{bin,sbin} $PATH
 
-if [ -f /usr/local/share/chruby/chruby.fish ]
-    source /usr/local/share/chruby/chruby.fish
-    chruby ruby-2.1.4
-end
-
+#set CHRUBY_ROOT /opt/arch
+#if [ -f /opt/arch/share/chruby/chruby.fish ]
+#    source /opt/arch/share/chruby/chruby.fish
+#    if [ -f ~/.ruby-version ]
+#        chruby (cat ~/.ruby-version)
+#    end
+#end
+#
 source ~/.config/fish/bundler.fish
