@@ -9,7 +9,11 @@ function fish_prompt --description "Write out a nice prompt"
     [ -n $GIT_INFO_GITDIR ]; and __git_info_vars
 
     set_color green
-    echo -n (string replace -r '.*/' '' $PWD)
+
+    # simple path
+    set pwd (string replace -r '.*/' '' $PWD)
+    if [ $PWD = $HOME ]; set pwd '~'; end
+    echo -n $pwd
 
     # add git prompt info
     if [ -n "$GIT_INFO_STATUS" ]
