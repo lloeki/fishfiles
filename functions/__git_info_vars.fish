@@ -71,7 +71,7 @@ function __git_info_ref --description "get current branch or ref"
     set -l ref (git rev-parse --short HEAD); or \
     set -l ref "unknown"
 
-    echo $ref | sed 's#^refs/heads/##'
+    string replace -r '^refs/heads/' '' $ref
 end
 
 function __git_info_vars --description "compute git status and set environment variables"
@@ -114,7 +114,7 @@ function __git_info_vars --description "compute git status and set environment v
 
     # gitdir corner case
     if [ "$g" = '.' ]
-        if [ "(basename "$PWD")" = ".git" ]
+        if [ "(string replace -r '^.*' '' "$PWD")" = ".git" ]
             # inside .git: not a bare repository!
             # weird: --is-bare-repository returns true regardless
             set bare 0
@@ -127,23 +127,23 @@ function __git_info_vars --description "compute git status and set environment v
     end
 
     # make relative path absolute
-    [ (echo "$g" | sed 's#^/##') = "$g" ]; and set g "$PWD/$g"
-    set g (echo "$g" | sed 's#/\$##')
+    [ (string replace -r '^/' '' "$g") = "$g" ]; and set g "$PWD/$g"
+    set g (string replace -r '/$' '' "$g")
 
     # find base dir (toplevel)
     [ "$bare" -eq 1 ]; and set toplevel "$g"
-    [ "$bare" -eq 0 ]; and set toplevel (dirname "$g")
+    [ "$bare" -eq 0 ]; and set toplevel (string replace -r '/[^/]*$' '' "$g")
 
     # find relative path within toplevel
-    set prefix (echo "$PWD" | sed "s#^$toplevel##")
-    set prefix (echo "$prefix" | sed 's#^/##')
+    set prefix (string replace -r "^$toplevel" '' $PWD)
+    set prefix (string replace -r '^/' '' "$prefix")
     [ -z "$prefix" ]; and set prefix '.' # toplevel == prefix
 
     # get the current branch, or whatever describes HEAD
     set ref (__git_info_ref)
 
     # get name
-    set name (basename "$toplevel")
+    set name (string replace -r '^.*/' '' "$toplevel")
 
     # evaluate action
     if [ -d "$g/rebase-merge" ]
