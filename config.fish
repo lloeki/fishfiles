@@ -10,5 +10,7 @@ set PATH /opt/arch/{bin,sbin} $PATH
 #        chruby (cat ~/.ruby-version)
 #    end
 #end
-#
+
+set -x EDITOR vim
+
 source ~/.config/fish/bundler.fish
